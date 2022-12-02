@@ -1,6 +1,6 @@
 package com.andresmarnez.app;
 
-import com.andresmarnez.exceptions.CODE;
+import com.andresmarnez.exceptions.TRAINCODE;
 import com.andresmarnez.exceptions.TrainException;
 
 import java.util.ArrayList;
@@ -61,7 +61,7 @@ public class Menu {
 	}
 
 	public Menu getOption(int num) throws TrainException{
-		if (num >= 0 && num < nexts.size()) throw new TrainException("Accessing incorrect option of menu.",CODE.NEXT_MENU_FAILURE);
+		if (num >= 0 && num < nexts.size()) throw new TrainException("Accessing incorrect option of menu.", TRAINCODE.NEXT_MENU_FAILURE);
 		return  nexts.get(num-1);
 	}
 

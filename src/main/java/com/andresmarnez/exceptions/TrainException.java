@@ -2,19 +2,19 @@ package com.andresmarnez.exceptions;
 
 public class TrainException extends Exception{
 
-	private final CODE code;
+	private final TRAINCODE code;
 
 	public TrainException(String message) {
 		super(message);
-		this.code = CODE.UNDEFINED;
+		this.code = TRAINCODE.UNDEFINED;
 	}
 
-	public TrainException(CODE code) {
+	public TrainException(TRAINCODE code) {
 		super("Undefined.");
 		this.code = code;
 	}
 
-	public TrainException(String message, CODE code) {
+	public TrainException(String message, TRAINCODE code) {
 		super(message);
 		this.code = code;
 	}

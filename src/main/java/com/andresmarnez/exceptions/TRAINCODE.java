@@ -1,8 +1,10 @@
 package com.andresmarnez.exceptions;
 
-public enum CODE {
+public enum TRAINCODE {
 
 	SESSION_FACTORY_FAILURE,
 	NEXT_MENU_FAILURE,
-	UNDEFINED
+	UNDEFINED,
+	NO_STATION_ON_CITY,
+	NO_CITY_PARAM
 }
