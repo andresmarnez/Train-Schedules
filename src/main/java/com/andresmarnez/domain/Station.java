@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jdk.jfr.Name;
 
 @Entity
-
 @Table (name = "stations")
 public class Station {
 

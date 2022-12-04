@@ -1,6 +1,7 @@
 package com.andresmarnez.dao;
 
 import com.andresmarnez.domain.Station;
+import com.andresmarnez.domain.Station_;
 import com.andresmarnez.dto.StationWrapper;
 import com.andresmarnez.exceptions.TrainException;
 import com.andresmarnez.util.HibernateUtil;
@@ -30,7 +31,7 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 			CriteriaQuery<Station> criteria = builder.createQuery(Station.class);
 			Root<Station> root = criteria.from(Station.class);
 			criteria.select(root)
-					.where(builder.equal(root.get("city"), city));
+					.where(builder.equal(root.get(Station_.CITY), city));
 
 			return session.createQuery(criteria).getResultList();
 
@@ -49,8 +50,8 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 
 			CriteriaQuery<String> criteria = builder.createQuery(String.class);
 			Root<Station> root = criteria.from(Station.class);
-			criteria.select(root.get("name"))
-					.where(builder.equal(root.get("name"), city));
+			criteria.select(root.get(Station_.NAME))
+					.where(builder.equal(root.get(Station_.CITY), city));
 
 			return session.createQuery(criteria).getResultList();
 
@@ -70,10 +71,9 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 			CriteriaQuery<Object[]> criteria = builder.createQuery(Object[].class);
 			Root<Station> root = criteria.from(Station.class);
 
-			Path<Long> id = root.get("Station_.id");
-			Path<Long> name = root.get("Station_.id");
-			Path<Long> cityPath = root.get("Station_.id");
-
+			Path<Long> id = root.get(Station_.id);
+			Path<Long> name = root.get(Station_.NAME);
+			Path<Long> cityPath = root.get(Station_.CITY);
 
 			criteria.multiselect(id, name, cityPath)
 					.where(builder.equal(cityPath, city));
@@ -96,12 +96,9 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 			CriteriaQuery<Tuple> criteria = builder.createQuery(Tuple.class);
 			Root<Station> root = criteria.from(Station.class);
 
-
-			Path<Long> id = root.get("Station_.id");
-			Path<Long> name = root.get("Station_.id");
-			Path<Long> cityPath = root.get("Station_.id");
-
-
+			Path<Long> id = root.get(Station_.id);
+			Path<Long> name = root.get(Station_.NAME);
+			Path<Long> cityPath = root.get(Station_.CITY);
 
 			criteria.multiselect(id, name, cityPath)
 					.where(builder.equal(cityPath, city));
@@ -124,12 +121,9 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 			CriteriaQuery<StationWrapper> criteria = builder.createQuery(StationWrapper.class);
 			Root<Station> root = criteria.from(Station.class);
 
-
-			Path<Long> id = root.get("Station_.id");
-			Path<Long> name = root.get("Station_.id");
-			Path<Long> cityPath = root.get("Station_.id");
-
-
+			Path<Long> id = root.get(Station_.id);
+			Path<Long> name = root.get(Station_.NAME);
+			Path<Long> cityPath = root.get(Station_.CITY);
 
 			criteria.multiselect(id, name, cityPath)
 					.where(builder.equal(cityPath, city));
