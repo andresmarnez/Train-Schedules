@@ -1,5 +1,7 @@
 package com.andresmarnez.app;
 
+import com.andresmarnez.dao.StationDAO;
+import com.andresmarnez.dao.StationDAOImpl;
 import com.andresmarnez.domain.*;
 import com.andresmarnez.exceptions.TrainException;
 import com.andresmarnez.util.HibernateUtil;
@@ -20,14 +22,11 @@ public class App {
 
 		try(Session session = HibernateUtil.getSessionFactory().openSession()){
 
-			session.getTransaction().begin();
+
+			StationDAO stationDAO = new StationDAOImpl();
 
 
-			Train str = session.find(Train.class,101);
-			System.out.println(str);
-
-
-			session.getTransaction().commit();
+			System.out.println(stationDAO.findNameByCityWrapper("Elche"));
 
 		} catch (TrainException e) {
 			System.out.println(e.getMessage());

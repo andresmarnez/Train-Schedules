@@ -60,6 +60,6 @@ public class Connection {
 		long diff = arrivalTime.getTime() - departureTime.getTime();
 		long diffMinutes = diff / (60 * 1000) % 60;
 		long diffHours = diff / (60 * 60 * 1000) % 24;
-		return "Scheduled: " + departureTime + " - " + arrivalTime + " (" + diffHours + ":" + diffMinutes + ")";
+		return idLine.getOrigin() + "/" + idLine.getEnd() +  ": " + departureTime + " - " + arrivalTime + " (" + diffHours + ":" + diffMinutes + ")";
 	}
 }

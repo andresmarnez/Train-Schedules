@@ -8,11 +8,11 @@ import javax.annotation.processing.Generated;
 @StaticMetamodel(TrainRoute.class)
 public abstract class TrainRoute_ {
 
+	public static volatile SingularAttribute<TrainRoute, Long> idTrain;
 	public static volatile SingularAttribute<TrainRoute, Connection> connection;
-	public static volatile SingularAttribute<TrainRoute, Train> train;
 
+	public static final String ID_TRAIN = "idTrain";
 	public static final String CONNECTION = "connection";
-	public static final String TRAIN = "train";
 
 }
 

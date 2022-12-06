@@ -3,13 +3,12 @@ package com.andresmarnez.domain;
 import jakarta.persistence.*;
 
 @Entity
-@Table (name = "trains_route")
+@Table (name="trains_route")
 public class TrainRoute {
 
 	@Id
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "id_train")
-	private Train train;
+	@Column (name = "id_train")
+	private Long idTrain;
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "id_connection")
@@ -18,12 +17,12 @@ public class TrainRoute {
 	public TrainRoute() {
 	}
 
-	public Train getTrain() {
-		return train;
+	public Long getTrain() {
+		return idTrain;
 	}
 
-	public void setTrain(Train train) {
-		this.train = train;
+	public void setTrain(Long train) {
+		this.idTrain = train;
 	}
 
 	public Connection getConnection() {

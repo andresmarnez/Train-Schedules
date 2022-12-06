@@ -107,6 +107,6 @@ public class Station {
 
 	@Override
 	public String toString() {
-		return name + ": " + city + " (" + coordinates + ")";
+		return name + ", " + city + ((coordinates!=null) ?" (" + coordinates + ")" : "");
 	}
 }
