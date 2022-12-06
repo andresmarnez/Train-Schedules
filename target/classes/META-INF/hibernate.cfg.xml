@@ -7,13 +7,17 @@
         <property name="connection.password">root</property>
 
         <!-- This will show all SQL-->
-        <property name="hibernate.show_sql">true</property>
+        <!-- <property name="hibernate.show_sql">true</property> -->
 
         <!-- JDBC Connection pool -->
         <property name="connection.pool_size">1</property>
 
         <!-- Mapping of the classes to be used by hibernate -->
         <mapping class="com.andresmarnez.domain.Station"/>
+        <mapping class="com.andresmarnez.domain.Line"/>
+        <mapping class="com.andresmarnez.domain.Connection"/>
+        <mapping class="com.andresmarnez.domain.Train"/>
+        <mapping class="com.andresmarnez.domain.TrainRoute"/>
 
 
     </session-factory>

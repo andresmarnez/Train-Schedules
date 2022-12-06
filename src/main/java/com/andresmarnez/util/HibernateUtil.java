@@ -36,7 +36,7 @@ public class HibernateUtil {
 				* As we failed to build the Session Factory, this object must be destroyed manually.
 				*/
 				StandardServiceRegistryBuilder.destroy(REGISTRY);
-				throw new TrainException("We failed to build the SessionFactory.\n" + ex.getCause(), TRAINCODE.SESSION_FACTORY_FAILURE);
+				throw new TrainException("We failed to build the SessionFactory.\n" + ex.getMessage(), TRAINCODE.SESSION_FACTORY_FAILURE);
 			}
 		}
 
