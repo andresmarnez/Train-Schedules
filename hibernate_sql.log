@@ -1,0 +1,2 @@
+2022-dic.-11 21:19:37 p. m. [main] DEBUG org.hibernate.SQL - select s1_0.id,s1_0.city,s1_0.coordinates,s1_0.name from stations s1_0 where s1_0.id=?
+2022-dic.-11 21:20:05 p. m. [main] DEBUG org.hibernate.SQL - select s1_0.id,s1_0.city,s1_0.coordinates,s1_0.name from stations s1_0 where s1_0.id=?
