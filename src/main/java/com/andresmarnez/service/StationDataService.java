@@ -16,13 +16,13 @@ public class StationDataService {
 	private final StationDAO stationDAO;
 
 
-	public StationDataService(GenericDAO<Station> genericDAO, StationDAO stationDAO) {
+	public StationDataService() {
 		this.genericDAO = new GenericDAOImpl<>(Station.class);
 		this.stationDAO = new StationDAOImpl();
 	}
 
 
-	List<Station> getStationsByCity(String city) throws TrainException {
+	public List<Station> getStationsByCity(String city) throws TrainException {
 		if (city != null){
 
 			List<Station> stations = stationDAO.findByCity(city);
@@ -35,4 +35,40 @@ public class StationDataService {
 		}
 	}
 
+	public Station getStationByName(String city) throws TrainException {
+		if (city != null && !city.isBlank()){
+
+			List<Station> stations = stationDAO.findByCity(city);
+			if (stations == null || stations.isEmpty())
+				throw new TrainException(TRAINCODE.NO_STATION_ON_CITY);
+
+			return stations.get(0);
+
+		} else {
+			throw new TrainException(TRAINCODE.NO_CITY_PARAM);
+		}
+	}
+
+	public void deleteById(Long id){
+
+		try {
+
+			genericDAO.deleteById(id);
+
+		} catch (TrainException e) {
+
+		}
+	}
+
+	public Station findById(Long id){
+
+		try {
+
+			return stationDAO.findById(id);
+
+		} catch (TrainException e) {
+
+			return null;
+		}
+	}
 }

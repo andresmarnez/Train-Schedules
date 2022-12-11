@@ -2,7 +2,6 @@ package com.andresmarnez.dao;
 
 import com.andresmarnez.domain.Station;
 import com.andresmarnez.domain.Station_;
-import com.andresmarnez.dto.StationWrapper;
 import com.andresmarnez.exceptions.TrainException;
 import com.andresmarnez.util.HibernateUtil;
 import jakarta.persistence.Tuple;
@@ -94,31 +93,6 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
 			CriteriaQuery<Tuple> criteria = builder.createQuery(Tuple.class);
-			Root<Station> root = criteria.from(Station.class);
-
-			Path<Long> id = root.get(Station_.id);
-			Path<Long> name = root.get(Station_.NAME);
-			Path<Long> cityPath = root.get(Station_.CITY);
-
-			criteria.multiselect(id, name, cityPath)
-					.where(builder.equal(cityPath, city));
-
-			return session.createQuery(criteria).getResultList();
-
-		} catch (TrainException te){
-
-		}
-
-		return null;
-	}
-
-	@Override
-	public List<StationWrapper> findNameByCityWrapper(String city) {
-		try(Session session = HibernateUtil.getSessionFactory().openSession()){
-
-			CriteriaBuilder builder = session.getCriteriaBuilder();
-
-			CriteriaQuery<StationWrapper> criteria = builder.createQuery(StationWrapper.class);
 			Root<Station> root = criteria.from(Station.class);
 
 			Path<Long> id = root.get(Station_.id);

@@ -25,7 +25,9 @@ public class HibernateUtil {
 
 			try{
 
-				sessionFactory = new MetadataSources(REGISTRY) // Using the registry we further communicate the Database model we are using
+				MetadataSources metadataSources = new MetadataSources(REGISTRY);
+
+				sessionFactory = metadataSources // Using the registry we further communicate the Database model we are using
 						.buildMetadata()
 						.buildSessionFactory();
 

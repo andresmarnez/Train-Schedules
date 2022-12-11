@@ -24,7 +24,6 @@ public class Line {
 
 	@OneToMany(
 			mappedBy = "idLine",
-			cascade = CascadeType.ALL,
 			orphanRemoval = true
 	)
 	private Collection<Connection> connections;

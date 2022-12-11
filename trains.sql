@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS connections(
 
 CREATE TABLE IF NOT EXISTS trains_route(
 	id_train INT PRIMARY KEY ,
-    id_connection INT UNIQUE,
+    id_connection INT,
 	CONSTRAINT fk_train FOREIGN KEY trains_route(id_train) REFERENCES trains(id),
     CONSTRAINT fk_connection FOREIGN KEY trains_route(id_connection) REFERENCES connections(id_line)
 );
@@ -108,3 +108,4 @@ INSERT trains_route(id_train,id_connection) VALUES
 (042, 16),
 (321, 23),
 (123, 25);
+

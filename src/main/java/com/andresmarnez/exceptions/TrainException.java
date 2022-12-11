@@ -19,6 +19,10 @@ public class TrainException extends Exception{
 		this.code = code;
 	}
 
+	public TRAINCODE getCode() {
+		return code;
+	}
+
 	@Override
 	public String toString() {
 		return code + ": " + getMessage();
