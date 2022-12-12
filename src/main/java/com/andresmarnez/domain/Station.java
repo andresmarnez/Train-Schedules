@@ -21,17 +21,20 @@ public class Station {
 	@Column
 	private String coordinates;
 
+
 	@OneToMany(
 			mappedBy = "origin",
 			cascade = CascadeType.ALL,
-			orphanRemoval = true
+			orphanRemoval = true,
+			fetch = FetchType.EAGER
 	)
 	private Collection<Line> departureLines;
 
 	@OneToMany(
 			mappedBy = "end",
 			cascade = CascadeType.ALL,
-			orphanRemoval = true
+			orphanRemoval = true,
+			fetch = FetchType.EAGER
 	)
 	private Collection<Line> arrivalLines;
 
@@ -107,6 +110,6 @@ public class Station {
 
 	@Override
 	public String toString() {
-		return name + ", " + city + ((coordinates!=null) ?" (" + coordinates + ")" : "");
+		return "ID " + id + " " + name + ", " + city + ((coordinates!=null) ?" (" + coordinates + ")" : "");
 	}
 }

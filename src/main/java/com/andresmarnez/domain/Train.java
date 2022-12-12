@@ -20,7 +20,8 @@ public class Train {
 	@Column(name = "retired_time")
 	private LocalDateTime retireDate;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL,
+			orphanRemoval = true)
 	@JoinColumn(name = "id")
 	private TrainRoute trainRoute;
 
@@ -76,10 +77,10 @@ public class Train {
 
 	@Override
 	public String toString() {
-		return "Train num."+ id +
+		return "TRAIN NUM."+ id +
 				"\nWagons: " + numWagons +
 				"\nLast Revision: " + lastCheck +
 				((retireDate == null)?"" : "\nRetirement Date: "  + retireDate) +
-				((trainRoute == null)?"" : trainRoute);
+				((trainRoute == null)?"" : trainRoute) + "\n";
 	}
 }

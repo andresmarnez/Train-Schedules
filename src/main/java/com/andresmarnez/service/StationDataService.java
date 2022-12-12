@@ -23,7 +23,7 @@ public class StationDataService {
 
 
 	public List<Station> getStationsByCity(String city) throws TrainException {
-		if (city != null){
+		if (city != null) {
 
 			List<Station> stations = stationDAO.findByCity(city);
 			if (stations == null || stations.isEmpty())
@@ -35,21 +35,17 @@ public class StationDataService {
 		}
 	}
 
-	public Station getStationByName(String city) throws TrainException {
-		if (city != null && !city.isBlank()){
+	public Station getStationByName(String city){
+		if (city != null && !city.isBlank()) {
 
-			List<Station> stations = stationDAO.findByCity(city);
-			if (stations == null || stations.isEmpty())
-				throw new TrainException(TRAINCODE.NO_STATION_ON_CITY);
-
-			return stations.get(0);
+			return stationDAO.findByName(city);
 
 		} else {
-			throw new TrainException(TRAINCODE.NO_CITY_PARAM);
+			return null;
 		}
 	}
 
-	public void deleteById(Long id){
+	public void deleteById(Long id) {
 
 		try {
 
@@ -60,7 +56,7 @@ public class StationDataService {
 		}
 	}
 
-	public Station findById(Long id){
+	public Station findById(Long id) {
 
 		try {
 
@@ -70,5 +66,14 @@ public class StationDataService {
 
 			return null;
 		}
+	}
+
+	public List<Station> getAllStations() {
+
+		List<Station> stations = stationDAO.getAll();
+		if (stations == null || stations.isEmpty())
+			return null;
+
+		return stations;
 	}
 }

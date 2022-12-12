@@ -24,7 +24,8 @@ public class Line {
 
 	@OneToMany(
 			mappedBy = "idLine",
-			orphanRemoval = true
+			orphanRemoval = true,
+			fetch = FetchType.EAGER
 	)
 	private Collection<Connection> connections;
 

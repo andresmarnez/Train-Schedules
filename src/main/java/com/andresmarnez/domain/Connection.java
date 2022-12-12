@@ -1,11 +1,12 @@
 package com.andresmarnez.domain;
 
 import jakarta.persistence.*;
+
 import java.sql.Time;
 
 
 @Entity
-@Table (name = "connections")
+@Table(name = "connections")
 public class Connection {
 
 	@Id
@@ -55,11 +56,16 @@ public class Connection {
 		this.arrivalTime = arrivalTime;
 	}
 
+	public String getSchedule(boolean isArrival) {
+		return  ((isArrival) ? arrivalTime : departureTime) + " " + ((isArrival) ? idLine.getOrigin().getCity() : idLine.getEnd().getCity());
+
+	}
+
 	@Override
 	public String toString() {
 		long diff = arrivalTime.getTime() - departureTime.getTime();
 		long diffMinutes = diff / (60 * 1000) % 60;
 		long diffHours = diff / (60 * 60 * 1000) % 24;
-		return idLine.getOrigin() + "/" + idLine.getEnd() +  ": " + departureTime + " - " + arrivalTime + " (" + diffHours + ":" + diffMinutes + ")";
+		return idLine.getOrigin().getCity() + "/" + idLine.getEnd().getCity() + ": " + departureTime + " - " + arrivalTime + " (" + diffHours + ":" + diffMinutes + ")";
 	}
 }

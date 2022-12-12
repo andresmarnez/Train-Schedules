@@ -1,11 +1,18 @@
 package com.andresmarnez.dao;
 
+import com.andresmarnez.domain.Station;
+import com.andresmarnez.domain.Station_;
 import com.andresmarnez.exceptions.TRAINCODE;
 import com.andresmarnez.exceptions.TrainException;
 import com.andresmarnez.util.HibernateUtil;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import org.hibernate.JDBCException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
+import java.util.List;
 
 public class GenericDAOImpl<T> implements GenericDAO<T>{
 
@@ -132,12 +139,23 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 	}
 
 	@Override
-	public void showAll() throws TrainException {
+	public List<T> getAll(){
 
 		try(Session session = HibernateUtil.getSessionFactory().openSession()){
 
+			CriteriaBuilder builder = session.getCriteriaBuilder();
 
+			CriteriaQuery<T> criteria = builder.createQuery(entityClass);
+			Root<T> root = criteria.from(entityClass);
+			criteria.select(root);
+
+			return session.createQuery(criteria).getResultList();
+
+		} catch (TrainException te){
 
 		}
+
+		return null;
 	}
+
 }

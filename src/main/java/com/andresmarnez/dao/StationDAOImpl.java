@@ -42,6 +42,27 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 	}
 
 	@Override
+	public Station findByName(String name) {
+
+		try(Session session = HibernateUtil.getSessionFactory().openSession()){
+
+			CriteriaBuilder builder = session.getCriteriaBuilder();
+
+			CriteriaQuery<Station> criteria = builder.createQuery(Station.class);
+			Root<Station> root = criteria.from(Station.class);
+			criteria.select(root)
+					.where(builder.equal(root.get(Station_.NAME), name));
+
+			return session.createQuery(criteria).getSingleResultOrNull();
+
+		} catch (TrainException te){
+
+		}
+
+		return null;
+	}
+
+	@Override
 	public List<String> findNameByCity(String city) {
 		try(Session session = HibernateUtil.getSessionFactory().openSession()){
 

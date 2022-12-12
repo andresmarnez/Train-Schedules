@@ -37,7 +37,7 @@ CREATE TABLE IF NOT EXISTS connections(
 CREATE TABLE IF NOT EXISTS trains_route(
 	id_train INT PRIMARY KEY ,
     id_connection INT,
-	CONSTRAINT fk_train FOREIGN KEY trains_route(id_train) REFERENCES trains(id),
+	CONSTRAINT fk_train FOREIGN KEY trains_route(id_train) REFERENCES trains(id) ON DELETE CASCADE,
     CONSTRAINT fk_connection FOREIGN KEY trains_route(id_connection) REFERENCES connections(id_line)
 );
 
@@ -79,7 +79,7 @@ INSERT connections(id_line,departure_time,arrival_time) VALUES
 (11,'12:25','13:15'), (11,'17:15','18:55'),	--       /   MUR
 (12,'11:50','13:20'), (12,'17:30','19:00'),	-- ZGZ   /   MAD
 (13,'11:40','12:45'), (13,'17:20','18:25'),	--       /   BCN
-(14,'14:05','12:45'), (14,'20:45','22:25'),	-- SEV   /   MAD
+(14,'14:05','16:45'), (14,'20:45','22:25'),	-- SEV   /   MAD
 (15,'10:10','11:05'),						--       /   MLG
 (16,'12:40','16:05'), (16,'20:15','23:40'),	-- BCN   /   MAD
 (17,'12:50','13:55'), (17,'22:45','23:50'),	--       /   ZGZ
@@ -108,4 +108,5 @@ INSERT trains_route(id_train,id_connection) VALUES
 (042, 16),
 (321, 23),
 (123, 25);
+
 
