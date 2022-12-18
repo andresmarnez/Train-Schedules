@@ -1,9 +1,10 @@
 package com.andresmarnez.dao;
 
-import com.andresmarnez.domain.Station;
-import com.andresmarnez.domain.Station_;
+import com.andresmarnez.domain.*;
+
 import com.andresmarnez.exceptions.TrainException;
 import com.andresmarnez.util.HibernateUtil;
+
 import jakarta.persistence.Tuple;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
@@ -20,9 +21,8 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 		super(Station.class);
 	}
 
-
 	@Override
-	public List<Station> findByCity(String city) {
+	public List<Station> findByCity(String city) throws TrainException {
 		try(Session session = HibernateUtil.getSessionFactory().openSession()){
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -33,18 +33,13 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 					.where(builder.equal(root.get(Station_.CITY), city));
 
 			return session.createQuery(criteria).getResultList();
-
-		} catch (TrainException te){
-
 		}
-
-		return null;
 	}
 
 	@Override
-	public Station findByName(String name) {
+	public Station findByName(String name) throws TrainException {
 
-		try(Session session = HibernateUtil.getSessionFactory().openSession()){
+		try(Session session = HibernateUtil.getSessionFactory().openSession()) {
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
 
@@ -54,16 +49,11 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 					.where(builder.equal(root.get(Station_.NAME), name));
 
 			return session.createQuery(criteria).getSingleResultOrNull();
-
-		} catch (TrainException te){
-
 		}
-
-		return null;
 	}
 
 	@Override
-	public List<String> findNameByCity(String city) {
+	public List<String> findNameByCity(String city) throws TrainException {
 		try(Session session = HibernateUtil.getSessionFactory().openSession()){
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -74,16 +64,11 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 					.where(builder.equal(root.get(Station_.CITY), city));
 
 			return session.createQuery(criteria).getResultList();
-
-		} catch (TrainException te){
-
 		}
-
-		return null;
 	}
 
 	@Override
-	public List<Object[]> findNameByCityObject(String city) {
+	public List<Object[]> findNameByCityObject(String city) throws TrainException {
 		try(Session session = HibernateUtil.getSessionFactory().openSession()){
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -99,16 +84,11 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 					.where(builder.equal(cityPath, city));
 
 			return session.createQuery(criteria).getResultList();
-
-		} catch (TrainException te){
-
 		}
-
-		return null;
 	}
 
 	@Override
-	public List<Tuple> findNameByCityTuple(String city) {
+	public List<Tuple> findNameByCityTuple(String city) throws TrainException {
 		try(Session session = HibernateUtil.getSessionFactory().openSession()){
 
 			CriteriaBuilder builder = session.getCriteriaBuilder();
@@ -125,12 +105,7 @@ public class StationDAOImpl extends GenericDAOImpl<Station> implements StationDA
 
 			return session.createQuery(criteria).getResultList();
 
-		} catch (TrainException te){
-
 		}
-
-		return null;
 	}
-
 
 }

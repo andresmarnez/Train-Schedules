@@ -41,7 +41,6 @@ public class HibernateUtil {
 				throw new TrainException("We failed to build the SessionFactory.\n" + ex.getMessage(), TRAINCODE.SESSION_FACTORY_FAILURE);
 			}
 		}
-
 		return sessionFactory;
 	}
 

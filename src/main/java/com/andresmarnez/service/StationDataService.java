@@ -35,7 +35,7 @@ public class StationDataService {
 		}
 	}
 
-	public Station getStationByName(String city){
+	public Station getStationByName(String city) throws TrainException {
 		if (city != null && !city.isBlank()) {
 
 			return stationDAO.findByName(city);
@@ -68,7 +68,7 @@ public class StationDataService {
 		}
 	}
 
-	public List<Station> getAllStations() {
+	public List<Station> getAllStations() throws TrainException {
 
 		List<Station> stations = stationDAO.getAll();
 		if (stations == null || stations.isEmpty())

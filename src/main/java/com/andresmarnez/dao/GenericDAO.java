@@ -10,5 +10,5 @@ public interface GenericDAO<S> {
 	void delete(S object) throws TrainException;
 	void deleteById(Long id) throws TrainException;
 	S findById(Long id) throws TrainException;
-	List<S> getAll();
+	List<S> getAll() throws TrainException;
 }

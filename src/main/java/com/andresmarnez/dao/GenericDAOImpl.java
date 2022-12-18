@@ -1,7 +1,5 @@
 package com.andresmarnez.dao;
 
-import com.andresmarnez.domain.Station;
-import com.andresmarnez.domain.Station_;
 import com.andresmarnez.exceptions.TRAINCODE;
 import com.andresmarnez.exceptions.TrainException;
 import com.andresmarnez.util.HibernateUtil;
@@ -139,7 +137,7 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 	}
 
 	@Override
-	public List<T> getAll(){
+	public List<T> getAll() throws TrainException {
 
 		try(Session session = HibernateUtil.getSessionFactory().openSession()){
 
@@ -151,11 +149,10 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 
 			return session.createQuery(criteria).getResultList();
 
-		} catch (TrainException te){
+		} catch (Exception te){
 
+			throw new TrainException(te.getMessage(),TRAINCODE.FIND_ALL);
 		}
-
-		return null;
 	}
 
 }

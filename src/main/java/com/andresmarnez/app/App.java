@@ -1,37 +1,36 @@
 package com.andresmarnez.app;
 
-
+import com.andresmarnez.domain.Line;
 import com.andresmarnez.domain.Station;
 import com.andresmarnez.domain.Train;
+import com.andresmarnez.exceptions.TRAINCODE;
 import com.andresmarnez.exceptions.TrainException;
-import com.andresmarnez.service.StationDataService;
-import com.andresmarnez.service.TrainDataService;
+import com.andresmarnez.service.*;
 import com.andresmarnez.util.HibernateUtil;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-
-import javax.print.Doc;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import java.io.StringWriter;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.List;
 import java.util.Scanner;
-
 
 public class App {
 
 	private final Scanner scanner = new Scanner(System.in);
 
 	private static final String TERMINAL_LINE = "->";
+	private static final String X_LINE = "\t\t\t\t\t EXIT: 'X' + ENTER";
 	private static final String TITLE =
 			"    ______)                   __                            \n" +
 					"   (, /          ,        (__/  ) /)        /)     /)       \n" +
@@ -41,24 +40,22 @@ public class App {
 					"                                                            \n" +
 					"Welcome to the Train Scheduler.";
 
-	public App() {
-	}
-
 
 	private void mainMenu() throws TrainException {
-		TrainDataService trainDataService = new TrainDataService();
 
 		while (true) {
 
+			System.out.println("\nTRAIN SCHEDULER");
 			System.out.print(
-					"\nChoose one of the following options:\n" +
+					"Choose one of the following options:\n" +
 							"1. Stations arrivals/departures.\n" +
 							"2. Update train status.\n" +
 							"3. Destroy all retired trains.\n" +
-							"4. List all stations' schedule.\n" +
-							"5. Get XML list.\n" +
-							"6. Get JSON list. (Not implemented yet)\n" +
-							"7. Exit program.\n" +
+							"4. Create a new line between stations.\n" +
+							"5. List all stations' schedule.\n" +
+							"6. Generate XML.\n" +
+							"7. Generate JSON.\n" +
+							"8. Exit program.\n" +
 							TERMINAL_LINE
 			);
 
@@ -67,8 +64,7 @@ public class App {
 
 				default:
 					System.out.println("Sorry, that is not a correct option.\n");
-					mainMenu();
-					return;
+					break;
 				case "1":
 					stationMenu();
 					break;
@@ -76,50 +72,105 @@ public class App {
 					getTrainInfo();
 					break;
 				case "3":
-					trainDataService.deleteRetiredTrains();
+					deleteTrains();
 					break;
 				case "4":
-					getAllStationsInfo();
+					createLine();
 					break;
 				case "5":
-					makeXMLStation();
+					getAllStationsInfo();
 					break;
 				case "6":
-					System.out.println("SOON AVAILABLE!");
+					generateXML();
 					break;
 				case "7":
+					generateJSON();
+					break;
+				case "8":
 					System.out.println("Hope to see you soon!");
-					return;
+					throw new TrainException(TRAINCODE.EXIT);
+			}
+		}
+	}
+
+	private void deleteTrains() throws TrainException {
+		TrainDataService trainDataService = new TrainDataService();
+		trainDataService.deleteRetiredTrains();
+	}
+
+	private void createLine() throws TrainException {
+
+		while (true) {
+
+			LineDataService lineDataService = new LineDataService();
+			Collection<Station> stations = new StationDataService().getAllStations();
+
+			System.out.println("\nTRAIN SCHEDULER\\NEW LINE" +
+					X_LINE +
+					"\n\nSelect the ORIGIN station:");
+
+			stations.forEach(s -> System.out.println(s.getId() + " - " + s.getName() + ", " + s.getCity()));
+			System.out.print(TERMINAL_LINE);
+			String originId = scanner.nextLine();
+
+			if (originId.matches("[xX]")) return;
+			else if (!originId.matches("[0-9]+")) System.out.println("Station was not chosen correctly," +
+					" please use the option numbers.");
+			else if (Integer.parseInt(originId) > stations.size()) {
+				System.out.println("The station number do not belong" +
+						" to any of the options.");
+				continue;
 			}
 
+			System.out.println("\nSelect the END station:");
+			stations.forEach(s -> System.out.println(s.getId() + " - " + s.getName() + ", " + s.getCity()));
+			System.out.print(TERMINAL_LINE);
+			String endId = scanner.nextLine();
+
+			if (originId.matches("[xX]")) return;
+			else if (!endId.matches("[0-9]+")) System.out.println("Station was not chosen correctly, " +
+					"please use the option numbers.");
+			else if (Integer.parseInt(endId) > stations.size()) {
+				System.out.println("The station numbers do not belong" +
+						" to any of the options.");
+				continue;
+			}
+
+			lineDataService.createLineByPoints(Long.parseLong(originId), Long.parseLong(endId));
+
+			return;
 		}
 	}
 
-	private void getTrainInfo(){
+	private void getTrainInfo() throws TrainException {
 		TrainDataService TrainDataService = new TrainDataService();
 
-		System.out.print(
-				"\nTRAIN SCHEDULER\\TRAINS\n" +
-						"Please enter the serial number of the train or leave empty to list all trains:\n" + TERMINAL_LINE
-		);
+		while (true) {
+			System.out.print(
+					"\nTRAIN SCHEDULER\\TRAINS" +
+							X_LINE +
+							"\nPlease enter the serial number of the train or leave empty to list all trains:\n" +
+							TERMINAL_LINE
+			);
 
-		String answer = scanner.nextLine();
+			String answer = scanner.nextLine();
 
-		if (answer.matches("[1-9]+")) {
-			trainMenu(TrainDataService.getTrainById(Long.parseLong(answer)));
+			if (answer.isBlank()) {
+				TrainDataService.getAllTrains().forEach(System.out::println);
 
-		} else if (answer.isBlank()) {
-			TrainDataService.getAllTrains().forEach(System.out::println);
-			System.out.println();
-			getTrainInfo();
+			} else if (answer.matches("[xX]")) {
+				break;
 
-		} else {
-			System.out.println("Sorry, that option doesn't exist.\n");
-			getTrainInfo();
+			} else if (answer.matches("[1-9]+")) {
+				trainMenu(TrainDataService.getTrainById(Long.parseLong(answer)));
+
+			} else {
+				System.out.println("Sorry, that option doesn't exist.\n");
+			}
 		}
 	}
 
-	private void trainMenu(Train train){
+	private void trainMenu(Train train) throws TrainException {
 		TrainDataService trainDataService = new TrainDataService();
 
 		if (train == null) {
@@ -149,11 +200,11 @@ public class App {
 					System.out.println("Sorry, that is not a correct option.\n");
 					break;
 				case "1":
-					trainDataService.updateCheckedTimeById(LocalDateTime.now(),train.getId());
+					trainDataService.updateCheckedTimeById(LocalDateTime.now(), train.getId());
 					System.out.println("Done.");
 					break;
 				case "2":
-					trainDataService.updateRetirementById(LocalDateTime.now(),train.getId());
+					trainDataService.updateRetirementById(LocalDateTime.now(), train.getId());
 					break;
 				case "3":
 					return;
@@ -165,29 +216,28 @@ public class App {
 
 	}
 
-	private void stationMenu() {
+	private void stationMenu() throws TrainException {
 
 		StationDataService service = new StationDataService();
 
-		System.out.print(
-				"\nTRAIN SCHEDULER\\STATIONS\n" +
-						"Please enter the station number or name (leave empty to list all stations):\n" + TERMINAL_LINE
-		);
+		while (true) {
 
-		String answer = scanner.nextLine();
+			System.out.print(
+					"\nTRAIN SCHEDULER\\STATIONS" +
+							X_LINE +
+							"\nPlease enter the station number or name (leave empty to list all stations):\n" + TERMINAL_LINE
+			);
 
-		if (answer.matches("[1-9]+")) {
-			getStationInfo(service.findById(Long.parseLong(answer)));
-		} else if (answer.isBlank()) {
-			service.getAllStations().forEach(System.out::println);
-			System.out.println();
-			stationMenu();
-		} else {
-			getStationInfo(service.getStationByName(answer));
+			String answer = scanner.nextLine();
+
+			if (answer.isBlank()) service.getAllStations().forEach(System.out::println);
+			else if (answer.matches("[1-9]+")) getStationInfo(service.findById(Long.parseLong(answer)));
+			else if (!answer.matches("[xX]")) getStationInfo(service.getStationByName(answer));
+			else break;
 		}
 	}
 
-	private void getAllStationsInfo() {
+	private void getAllStationsInfo() throws TrainException {
 
 		StationDataService service = new StationDataService();
 
@@ -213,7 +263,7 @@ public class App {
 
 	}
 
-	private void getStationInfo(Station station) {
+	private void getStationInfo(Station station) throws TrainException {
 
 		if (station == null) {
 			System.out.println("Sorry, that station does not exists or id/name is incorrect.\n" +
@@ -263,20 +313,58 @@ public class App {
 
 	}
 
-	private void addStations(List<Station> stations, Document document){
+	private void addStationsXML(List<Station> stations, Document document) {
 
 		Element rootElement = document.createElement("stations");
 		document.appendChild(rootElement);
-		int x = 1;
 
 		for (Station station :
 				stations) {
 
 			Element stationElement = document.createElement("station");
-			stationElement.setAttribute("id","" + station.getId());
+			stationElement.setAttribute("id", "" + station.getId());
 
 			Element stationName = document.createElement("name");
 			Element city = document.createElement("city");
+			Element arrivals = document.createElement("arrivals");
+			station.getArrivalLines().forEach(line -> {
+
+				String originCity = line.getOrigin().getCity();
+
+				line.getConnections().forEach(con -> {
+					Element connection = document.createElement("connection");
+					Element origin = document.createElement("origin");
+					Element time = document.createElement("arrival-time");
+
+					origin.setTextContent(originCity);
+					time.setTextContent(con.getArrivalTime().toString());
+
+					connection.appendChild(origin);
+					connection.appendChild(time);
+					arrivals.appendChild(connection);
+				});
+			});
+
+			Element departures = document.createElement("departures");
+
+			station.getDepartureLines().forEach(line -> {
+
+				String endCity = line.getEnd().getCity();
+
+				line.getConnections().forEach(con -> {
+					Element connection = document.createElement("connection");
+					Element end = document.createElement("destiny");
+					Element time = document.createElement("departure-time");
+
+					end.setTextContent(endCity);
+					time.setTextContent(con.getArrivalTime().toString());
+
+					connection.appendChild(end);
+					connection.appendChild(time);
+					departures.appendChild(connection);
+				});
+			});
+
 			Element coordinates = document.createElement("coordinates");
 			stationName.setTextContent(station.getName());
 			city.setTextContent(station.getCity());
@@ -285,11 +373,13 @@ public class App {
 			stationElement.appendChild(stationName);
 			stationElement.appendChild(city);
 			stationElement.appendChild(coordinates);
+			stationElement.appendChild(arrivals);
+			stationElement.appendChild(departures);
 			rootElement.appendChild(stationElement);
 		}
 	}
 
-	private void makeXMLStation(){
+	private void generateXML() throws TrainException {
 
 		StationDataService service = new StationDataService();
 		List<Station> stationList = service.getAllStations();
@@ -298,12 +388,12 @@ public class App {
 		try {
 
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = (Document) docBuilder.newDocument();
+			Document doc = docBuilder.newDocument();
 
-			addStations(stationList,doc);
+			addStationsXML(stationList, doc);
 
-			TransformerFactory transfac = TransformerFactory.newInstance();
-			Transformer trans = transfac.newTransformer();
+			TransformerFactory factory = TransformerFactory.newInstance();
+			Transformer trans = factory.newTransformer();
 			trans.setOutputProperty(OutputKeys.METHOD, "xml");
 			trans.setOutputProperty(OutputKeys.INDENT, "yes");
 			trans.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(2));
@@ -315,9 +405,57 @@ public class App {
 			System.out.println(xmlString);
 
 		} catch (Exception e) {
-			System.out.println("An error has ocurred.");
+			throw new TrainException("XML couldn't be created.", TRAINCODE.XML_ERROR);
 		}
 
+	}
+
+	private void generateJSON() throws TrainException {
+		JSONObject obj = new JSONObject();
+		JSONArray stationArray = new JSONArray();
+		StationDataService service = new StationDataService();
+
+		Collection<Station> stations = service.getAllStations();
+
+		for (Station station : stations) {
+			JSONObject stationJSON = new JSONObject();
+			stationJSON.put("id", station.getId());
+			stationJSON.put("name", station.getName());
+			stationJSON.put("city", station.getCity());
+			stationJSON.put("coordinates", station.getCoordinates());
+
+			JSONArray arrivals = new JSONArray();
+			JSONArray departures = new JSONArray();
+
+			station.getArrivalLines().forEach(l -> {
+				String origin = l.getOrigin().getCity();
+				l.getConnections()
+						.forEach(c -> {
+							JSONObject actualArrival = new JSONObject();
+							actualArrival.put("origin", origin);
+							actualArrival.put("arrival-time", c.getArrivalTime());
+							arrivals.put(actualArrival);
+						});
+			});
+
+			station.getDepartureLines().forEach(l -> {
+				String destiny = l.getEnd().getCity();
+				l.getConnections()
+						.forEach(c -> {
+							JSONObject actualArrival = new JSONObject();
+							actualArrival.put("destiny", destiny);
+							actualArrival.put("departure-time", c.getDepartureTime());
+							departures.put(actualArrival);
+						});
+			});
+
+			stationJSON.put("arrivals", arrivals);
+			stationJSON.put("departures", departures);
+			stationArray.put(stationJSON);
+		}
+
+		obj.put("stations", stationArray);
+		System.out.println(obj.toString(4));
 	}
 
 	public static void main(String[] args) {
@@ -325,21 +463,26 @@ public class App {
 		System.out.println(TITLE);
 		App app = new App();
 
-		try {
+		while (true) {
 
-			HibernateUtil.getSessionFactory().openSession();
-		} catch (IllegalStateException | TrainException ex) {
-			System.out.println("\n<ERROR> Couldn't establish connection to the DB, please read README.md or contact an admin.\n" +
-					"Please read hibernate.log for further technical details.");
-			return;
+			try {
+				HibernateUtil.getSessionFactory().openSession();
+				app.mainMenu();
+
+			} catch (TrainException e) {
+
+				switch (e.getCode()) {
+					case SESSION_FACTORY_FAILURE:
+						System.out.println("\n<ERROR> Couldn't establish connection to the DB, please read README.md " +
+								"or contact an admin.\n" +
+								"Please read hibernate.log for further technical details.");
+					case EXIT:
+						return;
+					default:
+						System.out.println("Trying to recover from an error. Application will restart.");
+						HibernateUtil.closeSession();
+				}
+			}
 		}
-
-		try {
-			app.mainMenu();
-
-		} catch (TrainException e) {
-
-		}
-
 	}
 }
