@@ -1,5 +1,6 @@
 package com.andresmarnez.dao;
 
+import com.andresmarnez.domain.*;
 import com.andresmarnez.exceptions.TRAINCODE;
 import com.andresmarnez.exceptions.TrainException;
 import com.andresmarnez.util.HibernateUtil;
@@ -14,6 +15,7 @@ import java.util.List;
 
 public class GenericDAOImpl<T> implements GenericDAO<T>{
 
+	public static Object lastObjectSaved;
 	private Class<T> entityClass;
 
 	public GenericDAOImpl(Class<T> trainScheduleClass) {
@@ -38,7 +40,9 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 			}
 
 		} catch (Exception ex){
-			throw new TrainException("Error trying to recover the dataase",TRAINCODE.ROLLBACK);
+			if (ex instanceof TrainException)
+				throw ex;
+			throw new TrainException("Error trying to recover the database",TRAINCODE.ROLLBACK);
 		}
 	}
 
@@ -72,6 +76,7 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 				transaction.begin();
 				session.remove(object);
 				transaction.commit();
+				saveLast(object);
 
 			} catch (JDBCException e) {
 				if (transaction.isActive())
@@ -80,6 +85,8 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 			}
 
 		} catch (Exception ex){
+			if (ex instanceof TrainException)
+				throw ex;
 			throw new TrainException("Error trying to recover the database.",TRAINCODE.ROLLBACK);
 		}
 	}
@@ -94,18 +101,24 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 				T data = session.find(entityClass,id);
 
 				if (data == null)
+
 					throw new TrainException("Id doesn't exists", TRAINCODE.ON_DELETE);
 				session.remove(data);
 
 				transaction.commit();
+				saveLast(data);
 
 			} catch (JDBCException e) {
+
 				if (transaction.isActive())
 					transaction.rollback();
 				throw new TrainException("Failed to delete.",TRAINCODE.ON_DELETE);
 			}
 
 		} catch (Exception ex){
+
+			if (ex instanceof TrainException)
+				throw ex;
 			throw new TrainException("Error trying to recover the database.",TRAINCODE.ROLLBACK);
 		}
 	}
@@ -132,6 +145,8 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 			}
 
 		} catch (Exception ex){
+			if (ex instanceof TrainException)
+				throw ex;
 			throw new TrainException(ex.getMessage(),TRAINCODE.ON_FIND_BY_ID);
 		}
 	}
@@ -150,9 +165,26 @@ public class GenericDAOImpl<T> implements GenericDAO<T>{
 			return session.createQuery(criteria).getResultList();
 
 		} catch (Exception te){
-
+			if (te instanceof TrainException)
+				throw te;
 			throw new TrainException(te.getMessage(),TRAINCODE.FIND_ALL);
 		}
 	}
 
+	@Override
+	public void saveLast(Object obj) {
+		GenericDAOImpl.lastObjectSaved =   obj;
+	}
+
+	@Override
+	public Object getLast() {
+		return GenericDAOImpl.lastObjectSaved;
+	}
+
+	@Override
+	public void restoreLast() throws TrainException {
+		if (lastObjectSaved != null)
+		create((T) lastObjectSaved);
+		System.out.println("The  " + lastObjectSaved.getClass().getName() + " was saved successfully.");
+	}
 }

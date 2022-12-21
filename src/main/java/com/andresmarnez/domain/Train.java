@@ -20,8 +20,7 @@ public class Train {
 	@Column(name = "retired_time")
 	private LocalDateTime retireDate;
 
-	@OneToOne(cascade = CascadeType.ALL,
-			orphanRemoval = true)
+	@OneToOne(orphanRemoval = true)
 	@JoinColumn(name = "id")
 	private TrainRoute trainRoute;
 

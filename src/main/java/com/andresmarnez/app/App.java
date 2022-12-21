@@ -1,5 +1,6 @@
 package com.andresmarnez.app;
 
+import com.andresmarnez.dao.GenericDAOImpl;
 import com.andresmarnez.domain.Line;
 import com.andresmarnez.domain.Station;
 import com.andresmarnez.domain.Train;
@@ -55,7 +56,8 @@ public class App {
 							"5. List all stations' schedule.\n" +
 							"6. Generate XML.\n" +
 							"7. Generate JSON.\n" +
-							"8. Exit program.\n" +
+							"8. Restore last deleted item. (Currently not fully working)\n" +
+							"9. Exit program.\n" +
 							TERMINAL_LINE
 			);
 
@@ -87,6 +89,9 @@ public class App {
 					generateJSON();
 					break;
 				case "8":
+					restoreLast();
+					break;
+				case "9":
 					System.out.println("Hope to see you soon!");
 					throw new TrainException(TRAINCODE.EXIT);
 			}
@@ -142,6 +147,32 @@ public class App {
 		}
 	}
 
+	private void restoreLast() throws TrainException{
+
+		if (GenericDAOImpl.lastObjectSaved == null){
+			System.out.println("There is no item to be restored.");
+			return;
+		}
+
+		System.out.println("The last object deleted was:\n" +
+				GenericDAOImpl.lastObjectSaved +
+				"\nDo you wish to recover it? (y/n)");
+
+		String ans = scanner.nextLine();
+		if (ans.matches("[nN]")){
+			System.out.println("We won't restore it then.");
+		} else if (ans.matches("[yY]")) {
+			System.out.println("Restoring item...");
+		}
+
+		if (GenericDAOImpl.lastObjectSaved instanceof Train){
+
+			GenericDAOImpl<Train> genericDAO = new GenericDAOImpl<>(Train.class);
+			genericDAO.restoreLast();
+			genericDAO.saveLast(null);
+		}
+	}
+
 	private void getTrainInfo() throws TrainException {
 		TrainDataService TrainDataService = new TrainDataService();
 
@@ -161,9 +192,9 @@ public class App {
 			} else if (answer.matches("[xX]")) {
 				break;
 
-			} else if (answer.matches("[1-9]+")) {
+			} else if (answer.matches("[0-9]+")) {
 				trainMenu(TrainDataService.getTrainById(Long.parseLong(answer)));
-
+				break;
 			} else {
 				System.out.println("Sorry, that option doesn't exist.\n");
 			}
@@ -479,6 +510,7 @@ public class App {
 					case EXIT:
 						return;
 					default:
+						System.out.println(e);
 						System.out.println("Trying to recover from an error. Application will restart.");
 						HibernateUtil.closeSession();
 				}

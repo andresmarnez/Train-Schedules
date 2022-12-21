@@ -46,7 +46,6 @@ public class LineDataService {
 					.where(predicates);
 
 			List<Line> lines = session.createQuery(criteria).getResultList();
-			System.out.println(lines);
 
 			if(lines.isEmpty()){
 				session.getTransaction().begin();

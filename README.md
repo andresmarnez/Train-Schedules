@@ -2,10 +2,13 @@
 ## Description
 
 This is a simple Java Maven project developed at IES Severo Ochoa.
-The program stores railway information and allows you to display, manipulate or delete partial information from it. It  was developed using Hibernate, 
+The program stores railway information and allows you to display, manipulate or delete partial information from it. It  was developed using Hibernate,
+Log4J and Jakarta Binding Api. 
+
+A MySQL server is needed in order to run this project as well as Java 11.
 ### Executing program
 
-* Make sure you are using a compatible version of Java. 
+* Make sure you are using a compatible version of Java. (11 SE) 
 * Execute the SQL script found below.
 * Execture the .jar
 ```
@@ -22,7 +25,6 @@ LinkedIn [@andresmarnez](https://www.linkedin.com/in/andresmarnez/)
 ##Script SQL
 ```
 DROP DATABASE IF EXISTS trains;
-
 CREATE DATABASE IF NOT EXISTS trains;
 USE trains;
 
@@ -132,6 +134,6 @@ INSERT trains_route(id_train,id_connection) VALUES
 (321, 23),
 (123, 25);
 
-
+UPDATE trains SET retired_time = CURRENT_TIMESTAMP WHERE trains.id > 200;
 
 ```
